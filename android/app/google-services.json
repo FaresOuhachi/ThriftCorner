@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "379796478290",
+    "project_id": "thriftcorner-1937",
+    "storage_bucket": "thriftcorner-1937.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:379796478290:android:294c28d66975c5aeff428b",
+        "android_client_info": {
+          "package_name": "com.example.thriftcorner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "379796478290-ikr8ltkcbrr2evc99qqg6hb1s2rd4uk6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBHRDyjDNG_j4BdaFs0m02RPdB-4DDgp5E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "379796478290-ikr8ltkcbrr2evc99qqg6hb1s2rd4uk6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
