@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'login_signup_screen.dart';
+import 'Authentication/login_signup_screen.dart';
 
 class SplashScreen extends StatelessWidget {
   @override

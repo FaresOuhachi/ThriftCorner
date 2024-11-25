@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:thriftcorner/screens/signup_tab.dart';
-
-import 'login_tab.dart';
+import 'Login/login_tab.dart';
+import 'Register/signup_tab.dart';
 
 class LoginSignupScreen extends StatefulWidget {
   @override
@@ -56,7 +55,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                   width: MediaQuery.of(context).size.width * 0.5,
                   padding: EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Color(0xFF595960).withOpacity(0.3),
+                    color: Color(0xFF262626).withOpacity(0.3),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TabBar(
@@ -65,13 +64,13 @@ class _LoginSignupScreenState extends State<LoginSignupScreen>
                     dividerHeight: 0,
                     indicator: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Color(0xAABEE34F), Color(0xFFFFFFFF)],
+                        colors: [Color(0xFFD6F7D8).withOpacity(0.3), Color(0xFFFFFFFF).withOpacity(0.3)],
                         begin: Alignment(-1.5, -1.5),
                         end: Alignment(1.5, 1.5),
                       ),
                       borderRadius: BorderRadius.circular(24),
                     ),
-                    labelColor: Colors.black,
+                    labelColor: Colors.white,
                     unselectedLabelColor: Color(0x66FFFFFF),
                     tabs: [
                       Padding(

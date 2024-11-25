@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../widgets/custom_text_field.dart';
-import 'forgot_password_screen.dart';
-import 'home_screen.dart';
+import '../../../widgets/custom_text_field.dart';
+import '../forgot_password_screen.dart';
+import '../../home_screen.dart';
 
 class LoginTab extends StatefulWidget {
   @override

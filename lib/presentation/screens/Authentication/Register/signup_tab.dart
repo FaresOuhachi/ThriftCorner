@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../widgets/custom_text_field.dart';
-import 'home_screen.dart';
+import '../../../widgets/custom_text_field.dart';
+import '../../home_screen.dart';
+import 'personalInfo_screen.dart';
 
 class SignUpTab extends StatefulWidget {
   @override
@@ -17,7 +18,7 @@ class _SignUpTabState extends State<SignUpTab> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
 
   Future<void> _signUpWithEmailPassword() async {
@@ -44,48 +45,36 @@ class _SignUpTabState extends State<SignUpTab> {
       return;
     }
 
-    try {
-      // Check if username exists
-      var usernameSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('username', isEqualTo: _usernameController.text)
-          .get();
-      if (usernameSnapshot.docs.isNotEmpty) {
-        _showErrorDialog("Username already exists.");
-        return;
-      }
-
-      // Check if email exists
-      var emailSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('email', isEqualTo: _emailController.text)
-          .get();
-      if (emailSnapshot.docs.isNotEmpty) {
-        _showErrorDialog("Email already registered.");
-        return;
-      }
-
-      // Proceed with sign-up
-      UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(
-        email: _emailController.text,
-        password: _passwordController.text,
-      );
-
-      // Store user info in Firestore
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-        'username': _usernameController.text,
-        'email': _emailController.text,
-      });
-
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
-    } on FirebaseAuthException catch (e) {
-      _showErrorDialog("Sign Up Failed: ${e.message}");
+    // Check if username or email already exists
+    var usernameSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('username', isEqualTo: _usernameController.text)
+        .get();
+    if (usernameSnapshot.docs.isNotEmpty) {
+      _showErrorDialog("Username already exists.");
+      return;
     }
+
+    var emailSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('email', isEqualTo: _emailController.text)
+        .get();
+    if (emailSnapshot.docs.isNotEmpty) {
+      _showErrorDialog("Email already registered.");
+      return;
+    }
+
+    // Navigate to the additional information screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PersonalInfoScreen(
+          username: _usernameController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      ),
+    );
   }
 
   Future<void> _signUpWithGoogle() async {
@@ -96,7 +85,7 @@ class _SignUpTabState extends State<SignUpTab> {
       }
 
       final GoogleSignInAuthentication googleAuth =
-      await googleUser.authentication;
+          await googleUser.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -104,7 +93,7 @@ class _SignUpTabState extends State<SignUpTab> {
       );
 
       UserCredential userCredential =
-      await _auth.signInWithCredential(credential);
+          await _auth.signInWithCredential(credential);
 
       // Check if user already exists in Firestore
       var userDoc = await FirebaseFirestore.instance
@@ -186,7 +175,8 @@ class _SignUpTabState extends State<SignUpTab> {
               icon: Icons.lock_outline,
               obscureText: true),
           SizedBox(height: 20),
-          CustomTextField(controller: _confirmPasswordController,
+          CustomTextField(
+              controller: _confirmPasswordController,
               label: 'Confirm Password',
               icon: Icons.lock_outline,
               obscureText: true),
