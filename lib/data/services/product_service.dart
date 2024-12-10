@@ -42,7 +42,7 @@ class ProductService implements IProductService {
 
       if (query.isNotEmpty) {
         productsQuery = productsQuery.where('title', isGreaterThanOrEqualTo: query)
-            .where('title', isLessThanOrEqualTo: query + '\uf8ff');
+            .where('title', isLessThanOrEqualTo: '$query\uf8ff');
       }
 
       if (filters != null) {

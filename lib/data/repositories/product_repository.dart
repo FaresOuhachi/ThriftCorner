@@ -90,16 +90,21 @@ class ProductRepository implements IProductRepository {
     try {
       Query query = _firestore.collection('products');
 
-      if (category != null)
+      if (category != null) {
         query = query.where('category', isEqualTo: category);
-      if (minPrice != null)
+      }
+      if (minPrice != null) {
         query = query.where('price', isGreaterThanOrEqualTo: minPrice);
-      if (maxPrice != null)
+      }
+      if (maxPrice != null) {
         query = query.where('price', isLessThanOrEqualTo: maxPrice);
-      if (condition != null)
+      }
+      if (condition != null) {
         query = query.where('condition', isEqualTo: condition);
-      if (location != null)
+      }
+      if (location != null) {
         query = query.where('location', isEqualTo: location);
+      }
       if (isSold != null) query = query.where('isSold', isEqualTo: isSold);
 
       query = query.limit(limit);

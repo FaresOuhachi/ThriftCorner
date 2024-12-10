@@ -2,11 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import '../../../widgets/custom_text_field.dart';
+import '../../../../data/repositories/user_repository.dart';
+import '../../../../data/services/firebase_auth_service.dart';
+import '../../../../domain/models/user_model.dart';
 import '../forgot_password_screen.dart';
 import '../../home_screen.dart';
 
 class LoginTab extends StatefulWidget {
+  const LoginTab({super.key});
+
   @override
   _LoginTabState createState() => _LoginTabState();
 }
@@ -20,6 +24,11 @@ class _LoginTabState extends State<LoginTab> {
 
   bool _isUsernameEmpty = false;
   bool _isPasswordEmpty = false;
+
+  final FirebaseAuthService authService = FirebaseAuthService(
+    FirebaseAuth.instance,
+    UserRepository(FirebaseFirestore.instance),
+  );
 
   Future<void> _loginWithUsernamePassword() async {
     setState(() {
@@ -50,17 +59,21 @@ class _LoginTabState extends State<LoginTab> {
 
       String email = snapshot.docs.first['email'];
 
-      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      UserModel? user = await authService.signIn(email, password); // Await here
+
+      if (user == null) {
+        throw Exception("Sign-in failed. User not found.");
+      }
 
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } on FirebaseAuthException catch (e) {
       _showErrorDialog("Login Failed: ${e.message}");
+    } on Exception catch (e) {
+      _showErrorDialog("Login Failed: ${e.toString()}");
     }
   }
+
 
   Future<void> _loginWithGoogle() async {
     try {

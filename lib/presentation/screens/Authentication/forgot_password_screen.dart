@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:thriftcorner/data/services/firebase_auth_service.dart';
 
+import '../../../data/repositories/user_repository.dart';
 import '../../widgets/custom_text_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -11,8 +14,11 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
+  final FirebaseAuthService authService = FirebaseAuthService(
+    FirebaseAuth.instance,
+    UserRepository(FirebaseFirestore.instance),
+  );
 
   void _resetPassword() async {
     String email = _emailController.text;
@@ -22,7 +28,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     }
 
     try {
-      await _auth.sendPasswordResetEmail(email: email);
+      authService.resetPassword(email);
       _showMessageDialog("Password reset link sent to $email.");
     } catch (e) {
       _showMessageDialog("Error: ${e.toString()}");
@@ -34,7 +40,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Notification', style: TextStyle(color: Color(0xFFBEE34F))),
+          title:
+              Text('Notification', style: TextStyle(color: Color(0xFFBEE34F))),
           content: Text(message, style: TextStyle(color: Colors.white)),
           actions: [
             TextButton(
@@ -56,7 +63,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         title: Text(
           "Forgot Password",
-          style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Color(0xFF000000),
         centerTitle: true,
@@ -96,8 +104,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     padding: const EdgeInsets.all(48.0),
                     child: Image.asset('assets/icons/lock.png'),
                   ),
-                  CustomTextField(controller: _emailController, label: 'Email', icon: Icons.email_outlined, obscureText: false),
-
+                  CustomTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      icon: Icons.email_outlined,
+                      obscureText: false),
                   SizedBox(height: 16),
                   Text(
                     'Please enter your email account to send the link verification to reset your password.',
@@ -112,7 +123,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(37),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                       ),
                       child: Text(
                         'Reset Password',

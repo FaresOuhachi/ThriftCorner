@@ -3,6 +3,8 @@ import 'Login/login_tab.dart';
 import 'Register/signup_tab.dart';
 
 class LoginSignupScreen extends StatefulWidget {
+  const LoginSignupScreen({super.key});
+
   @override
   _LoginSignupScreenState createState() => _LoginSignupScreenState();
 }

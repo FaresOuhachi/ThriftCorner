@@ -10,6 +10,8 @@ import 'Sections/search_page.dart';
 import 'Sections/settings_page.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -69,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildNavItem(String iconPath, int index) {
-    return Container(
+    return SizedBox(
       width: 30.0,
       height: 30.0,
       child: SvgPicture.asset(

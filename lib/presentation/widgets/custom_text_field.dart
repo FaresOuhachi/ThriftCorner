@@ -6,7 +6,7 @@ class CustomTextField extends StatelessWidget {
   final IconData icon;
   final bool obscureText;
 
-  const CustomTextField({
+  const CustomTextField({super.key, 
     required this.controller,
     required this.label,
     required this.icon,

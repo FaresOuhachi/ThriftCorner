@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get.dart';
+import 'package:cloudinary_flutter/cloudinary_context.dart';
+import 'package:cloudinary_url_gen/cloudinary.dart';
 import 'package:thriftcorner/presentation/screens/splash_screen.dart';
 
 import 'data/repositories/product_repository.dart';
@@ -18,7 +20,7 @@ import 'domain/repositories/wishlist_repository.dart';
 import 'domain/services/auth_service.dart';
 import 'domain/services/product_service.dart';
 import 'presentation/controllers/home_controller.dart';
-import 'presentation/screens/home_screen.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,7 @@ Future<void> main() async {
   try {
     // Initialize Firebase
     await Firebase.initializeApp();
-
+    CloudinaryContext.cloudinary = Cloudinary.fromCloudName(cloudName: "dc3luq18s");
     // Set up dependencies
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
@@ -61,6 +63,8 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(

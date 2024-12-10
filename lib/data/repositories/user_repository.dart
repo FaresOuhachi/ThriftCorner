@@ -11,10 +11,27 @@ class UserRepository implements IUserRepository {
   @override
   Future<UserModel?> getUserById(String id) async {
     try {
-      final doc = await _firestore.collection('users').doc(id).get();
-      return doc.exists ? UserModel.fromMap(doc.data()!) : null;
+      final snapshot = await _firestore.collection('users').doc(id).get();
+      if (snapshot.exists) {
+        final data = snapshot.data()!;
+        return UserModel(
+          id: snapshot.id,
+          username: data['username'] ?? '',
+          email: data['email'] ?? '',
+          address: data['address'] ?? '',
+          country: data['country'] ?? '',
+          phoneNumber: data['phoneNumber'] ?? '',
+          gender: data['gender'] ?? '',
+          reviews: (data['reviews'] as List<dynamic>?)
+              ?.map((review) => ReviewModel.fromMap(review as Map<String, dynamic>))
+              .toList() ??
+              [],
+          createdAt: (data['createdAt'] as Timestamp).toDate(),
+        );
+      }
+      return null;
     } catch (e) {
-      throw Exception('Failed to get user: $e');
+      throw Exception('Failed to fetch user by ID: $e');
     }
   }
 
@@ -54,7 +71,7 @@ class UserRepository implements IUserRepository {
       final userRef = _firestore.collection('users').doc(userId);
 
       await _firestore.runTransaction((transaction) async {
-        await transaction.set(
+        transaction.set(
             userRef.collection('reviews').doc(review.id), review.toMap());
 
         final userDoc = await transaction.get(userRef);

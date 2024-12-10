@@ -7,6 +7,8 @@ import '../../home_screen.dart';
 import 'personalInfo_screen.dart';
 
 class SignUpTab extends StatefulWidget {
+  const SignUpTab({super.key});
+
   @override
   _SignUpTabState createState() => _SignUpTabState();
 }
@@ -192,33 +194,6 @@ class _SignUpTabState extends State<SignUpTab> {
             ),
             child: Text('Sign Up',
                 style: TextStyle(color: Colors.white, fontSize: 20)),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'or',
-            style: TextStyle(color: Color(0xFFB1C378), fontSize: 16),
-          ),
-          SizedBox(height: 10),
-          OutlinedButton(
-            onPressed: _signUpWithGoogle,
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: Color(0xFFFFFFFF), width: 2.0),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(37),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Sign-up with Google',
-                  style: TextStyle(color: Color(0xFFFFFFFF), fontSize: 18),
-                ),
-                SizedBox(width: 10),
-                Image.asset('assets/icons/google.png', height: 24),
-              ],
-            ),
           ),
           Spacer(),
         ],
