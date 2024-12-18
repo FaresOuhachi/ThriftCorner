@@ -34,20 +34,23 @@ class UserModel {
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-      id: map['id'],
-      email: map['email'],
-      username: map['username'],
-      gender: map['gender'],
-      address: map['address'],
-      country: map['country'],
-      profileImage: map['profileImage'],
-      phoneNumber: map['phoneNumber'],
-      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
-      reviewCount: map['reviewCount'] ?? 0,
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
-      favorites: List<String>.from(map['favorites'] ?? []),
-      reviews: (map['reviews'] ?? []).map((review) => ReviewModel.fromMap(review)).toList(),
-    );
+        id: map['id'],
+        email: map['email'],
+        username: map['username'],
+        gender: map['gender'],
+        address: map['address'],
+        country: map['country'],
+        profileImage: map['profileImage'] ?? '',
+        phoneNumber: map['phoneNumber'],
+        rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
+        reviewCount: map['reviewCount'] ?? 0,
+        createdAt: (map['createdAt'] as Timestamp).toDate(),
+        favorites: List<String>.from(map['favorites'] ?? []),
+        reviews: (map['reviews'] as List<dynamic>?)
+                ?.map((review) => ReviewModel.fromMap(review))
+                .whereType<ReviewModel>() // Ensures non-null objects
+                .toList() ??
+            []);
   }
 
   Map<String, dynamic> toMap() {
@@ -66,5 +69,10 @@ class UserModel {
       'favorites': favorites,
       'reviews': reviews.map((review) => review.toMap()).toList(),
     };
+  }
+
+  @override
+  String toString() {
+    return 'UserModel(id: $id, username: $username, email: $email, profileImage: $profileImage, phoneNumber: $phoneNumber)';
   }
 }

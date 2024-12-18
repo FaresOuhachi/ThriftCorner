@@ -22,10 +22,10 @@ class UserRepository implements IUserRepository {
           country: data['country'] ?? '',
           phoneNumber: data['phoneNumber'] ?? '',
           gender: data['gender'] ?? '',
+          profileImage: data['profileImage'],  // Add profileImage here
           reviews: (data['reviews'] as List<dynamic>?)
               ?.map((review) => ReviewModel.fromMap(review as Map<String, dynamic>))
-              .toList() ??
-              [],
+              .toList() ?? [],
           createdAt: (data['createdAt'] as Timestamp).toDate(),
         );
       }
@@ -34,6 +34,7 @@ class UserRepository implements IUserRepository {
       throw Exception('Failed to fetch user by ID: $e');
     }
   }
+
 
   @override
   Future<List<UserModel>> getAllUsers() async {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum TransactionStatus { pending, processing, success, failed, cancelled }
+enum TransactionStatus { success, sent, cancelled }
 
 class TransactionModel {
   final String id;
@@ -29,10 +29,10 @@ class TransactionModel {
       buyerId: map['buyerId'],
       sellerId: map['sellerId'],
       productId: map['productId'],
-      amountPaid: (map['amountPaid'] as num).toDouble(),
+      amountPaid: map['amountPaid'],
       status: TransactionStatus.values.firstWhere(
             (e) => e.toString().split('.').last == map['status'],
-        orElse: () => TransactionStatus.pending,
+        orElse: () => TransactionStatus.success,
       ),
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       updatedAt: map['updatedAt'] != null ? (map['updatedAt'] as Timestamp).toDate() : null,

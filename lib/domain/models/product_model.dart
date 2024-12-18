@@ -29,7 +29,7 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> data, String documentId) {
     return Product(
-      id: documentId,
+      id: documentId,  // Assign the document ID here
       title: data['title'] ?? '',
       sellerId: data['sellerId'] ?? '',
       images: List<String>.from(data['images'] ?? []),

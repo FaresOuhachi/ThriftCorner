@@ -28,23 +28,36 @@ class FirebaseAuthService implements IAuthService {
   @override
   Future<UserModel?> signUp(String email, String password, Map<String, dynamic> userData) async {
     try {
+
+      final String address = userData['address'] ?? '';
+      final String country = userData['country'] ?? '';
+      final String? profileImage = userData['profileImage'] ?? '';
+      final String phoneNumber = userData['phoneNumber'] ?? '';
+
+      // Create the user using FirebaseAuth
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
+      // Ensure that userCredential.user is not null
       if (userCredential.user != null) {
         final user = UserModel(
           id: userCredential.user!.uid,
           username: userData['username'],
           email: email,
-          address: userData['address'],
-          country: userData['country'],
-          phoneNumber: userData['phoneNumber'],
           gender: userData['gender'],
-          reviews: [],
+          address: address,
+          country: country,
+          profileImage: profileImage,  // This can be null, based on your model
+          phoneNumber: phoneNumber,
+          rating: 0.0,  // Default rating
+          reviewCount: 0,  // Default review count
           createdAt: DateTime.now(),
+          favorites: [],  // Default empty list of favorites
+          reviews: [],  // Default empty list of reviews
         );
+
         await _userRepository.createUser(user);
         return user;
       }

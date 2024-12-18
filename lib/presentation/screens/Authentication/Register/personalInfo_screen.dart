@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:thriftcorner/presentation/screens/Authentication/Register/profile_picture_page.dart';
 import '../../../../data/repositories/user_repository.dart';
 import '../../../../data/services/firebase_auth_service.dart';
 import '../../../../domain/models/user_model.dart';
 import '../../../widgets/custom_text_field.dart';
-import '../../home_screen.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   final String username;
@@ -29,55 +29,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   String? _gender;
-  final FirebaseAuthService authService = FirebaseAuthService(
-    FirebaseAuth.instance,
-    UserRepository(FirebaseFirestore.instance),
-  );
-
-  Future<void> _createAccount() async {
-    if (_selectedCountry == null ||
-        _addressController.text.isEmpty ||
-        _phoneNumberController.text.isEmpty ||
-        _gender == null) {
-      _showErrorDialog("Please fill in all fields.");
-      return;
-    }
-
-    try {
-      UserModel? user = await authService.signUp(widget.email, widget.password, {
-        'username': widget.username,
-        'address': _addressController.text,
-        'country': _selectedCountry,
-        'phoneNumber': _phoneNumberController.text,
-        'gender': _gender,
-      });
-
-      if (user != null) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      } else {
-        _showErrorDialog("Account creation failed. Please try again.");
-      }
-    } on FirebaseAuthException catch (e) {
-      _showErrorDialog("Account Creation Failed: ${e.message}");
-    }
-  }
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Error'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showCountryPicker() {
     showCountryPicker(
@@ -121,7 +72,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               Flexible(
                 flex: 3,
                 child: Container(
-                  constraints: BoxConstraints(maxHeight: 200), // Constrain height
+                  constraints: BoxConstraints(maxHeight: 200),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -134,7 +85,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       ),
                       SizedBox(height: 48),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 20.0),
                         child: Text(
                           'Enter Your Personal Details',
                           style: TextStyle(
@@ -148,6 +99,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   ),
                 ),
               ),
+              SizedBox(height: 40),
               Flexible(
                 flex: 6,
                 child: SingleChildScrollView(
@@ -266,7 +218,22 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       ],
                     ),
                     child: ElevatedButton(
-                      onPressed: _createAccount,
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePictureScreen(
+                              username: widget.username,
+                              email: widget.email,
+                              password: widget.password,
+                              address: _addressController.text,
+                              phoneNumber: _phoneNumberController.text,
+                              country: _selectedCountry,
+                              gender: _gender,
+                            ),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         padding:
@@ -277,7 +244,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                         ),
                       ),
                       child: Text(
-                        'Create Account',
+                        'Next',
                         style: TextStyle(
                             fontSize: 20,
                             color: Colors.white,

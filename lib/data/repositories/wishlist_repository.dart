@@ -14,17 +14,27 @@ class WishlistRepository implements IWishlistRepository {
 
       await _firestore.runTransaction((transaction) async {
         final wishlistDoc = await transaction.get(wishlistRef);
-        final wishlistData = wishlistDoc.data();
 
-        if (wishlistData != null) {
-          final wishlist = Wishlist.fromMap(wishlistData);
+        if (wishlistDoc.exists) {
+          // If wishlist exists, update the list of product IDs
+          final wishlistData = wishlistDoc.data();
+          final wishlist = Wishlist.fromMap(wishlistData!);
 
-          // Avoid mutation directly on the list, create a new list with the product added
           if (!wishlist.productIds.contains(productId)) {
-            final updatedProducts = List<String>.from(wishlist.productIds)
-              ..add(productId);
-            transaction.update(wishlistRef, {'products': updatedProducts});
+            final updatedProducts = List<String>.from(wishlist.productIds)..add(productId);
+            transaction.update(wishlistRef, {'productIds': updatedProducts});
           }
+        } else {
+          // If wishlist doesn't exist, create a new wishlist with the product ID
+          final newWishlist = Wishlist(
+            id: userId,  // Using userId as the wishlist ID
+            userId: userId,
+            productIds: [productId],
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          );
+
+          transaction.set(wishlistRef, newWishlist.toMap());
         }
       });
     } catch (e) {
@@ -37,22 +47,17 @@ class WishlistRepository implements IWishlistRepository {
     try {
       final wishlistRef = _firestore.collection('wishlists').doc(userId);
 
-      // Start a Firestore transaction to ensure atomic updates
       await _firestore.runTransaction((transaction) async {
         final wishlistDoc = await transaction.get(wishlistRef);
 
-        // If the wishlist doesn't exist, throw an error
         if (!wishlistDoc.exists) {
           throw Exception('Wishlist not found for user: $userId');
         }
 
-        // Convert the document to a Wishlist object
         final wishlist = Wishlist.fromMap(wishlistDoc.data()!);
 
-        // Remove the product if it exists in the list
         if (wishlist.productIds.contains(productId)) {
           wishlist.productIds.remove(productId);
-          // Update the wishlist in Firestore
           transaction.update(wishlistRef, {'productIds': wishlist.productIds});
         } else {
           throw Exception('Product not found in wishlist');
@@ -68,13 +73,10 @@ class WishlistRepository implements IWishlistRepository {
     try {
       final doc = await _firestore.collection('wishlists').doc(userId).get();
 
-      // If the wishlist document doesn't exist, return false
       if (!doc.exists) return false;
 
-      // Convert the document to a Wishlist object
       final wishlist = Wishlist.fromMap(doc.data()!);
 
-      // Check if the productId exists in the productIds list
       return wishlist.productIds.contains(productId);
     } catch (e) {
       throw Exception('Failed to check if product is in wishlist: $e');
@@ -93,5 +95,4 @@ class WishlistRepository implements IWishlistRepository {
       throw Exception('Failed to get wishlist for user $userId: $e');
     }
   }
-
 }

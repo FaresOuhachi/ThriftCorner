@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,6 @@ class _AddProductPageState extends State<AddProductPage> {
   final IProductRepository _productRepository = Get.find<IProductRepository>();
   List<File> _selectedImages = [];
 
-
   final TextEditingController titleController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -29,7 +29,6 @@ class _AddProductPageState extends State<AddProductPage> {
 
   String selectedSize = '';
   String selectedCondition = 'New';
-
 
   Future<List<String>> _uploadImagesToCloudinary(List<File> imageFiles) async {
     const cloudinaryUrl =
@@ -41,7 +40,8 @@ class _AddProductPageState extends State<AddProductPage> {
     for (File imageFile in imageFiles) {
       final request = http.MultipartRequest('POST', Uri.parse(cloudinaryUrl));
       request.fields['upload_preset'] = uploadPreset;
-      request.files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('file', imageFile.path));
 
       try {
         final response = await request.send();
@@ -59,8 +59,6 @@ class _AddProductPageState extends State<AddProductPage> {
     return imageUrls;
   }
 
-
-
   Future<void> _pickMultipleImages() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.image,
@@ -73,8 +71,6 @@ class _AddProductPageState extends State<AddProductPage> {
       });
     }
   }
-
-
 
   void _handleUploadProduct() async {
     if (_selectedImages.isEmpty) {
@@ -98,7 +94,10 @@ class _AddProductPageState extends State<AddProductPage> {
           sellerId: _auth.currentUser?.uid ?? '',
           images: imageUrls,
           size: selectedSize,
-          price: double.tryParse(priceController.text.trim()) ?? 0.0,
+          price: (priceController.text.trim().isNotEmpty)
+              ? (double.tryParse(priceController.text.trim()) ?? 0.0) as double
+              : 0.0 as double,
+
           color: colorController.text.trim(),
           condition: selectedCondition,
           description: descriptionController.text.trim(),
@@ -133,8 +132,6 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
-
-
   void _showConditionPicker() {
     final List<String> productConditions = [
       'New',
@@ -150,9 +147,7 @@ class _AddProductPageState extends State<AddProductPage> {
           backgroundColor: Colors.black.withOpacity(0.8),
           shape: RoundedRectangleBorder(
             side: BorderSide(
-                width: 1.0,
-                color: Color(0xFFE5EAFF).withOpacity(0.375)
-            ),
+                width: 1.0, color: Color(0xFFE5EAFF).withOpacity(0.375)),
             borderRadius: BorderRadius.circular(16),
           ),
           title: Text(
@@ -196,12 +191,6 @@ class _AddProductPageState extends State<AddProductPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          actions: [
-            _buildProfileSection(_auth.currentUser),
-          ],
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
           child: Column(
@@ -246,31 +235,6 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  Widget _buildProfileSection(User? user) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 20,
-            backgroundImage: NetworkImage(
-              user?.photoURL ??
-                  'https://www.example.com/default-profile-pic.jpg',
-            ),
-          ),
-          SizedBox(width: 10),
-          Text(
-            user?.displayName ?? 'Username',
-            style: TextStyle(
-              color: Color(0xFFBEE34F),
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildProductImage() {
     return Center(
       child: Column(
@@ -296,19 +260,19 @@ class _AddProductPageState extends State<AddProductPage> {
                   ),
                   child: _selectedImages.isEmpty
                       ? Center(
-                    child: Text(
-                      'Tap to add images',
-                      style:
-                      TextStyle(color: Colors.white.withOpacity(0.375)),
-                    ),
-                  )
+                          child: Text(
+                            'Tap to add images',
+                            style: TextStyle(
+                                color: Colors.white.withOpacity(0.375)),
+                          ),
+                        )
                       : ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.file(
-                      _selectedImages.first,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.file(
+                            _selectedImages.first,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                 ),
               ),
               if (_selectedImages.isNotEmpty)
@@ -365,8 +329,6 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-
-
   Widget _buildSizeSection() {
     final List<String> sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
@@ -374,7 +336,8 @@ class _AddProductPageState extends State<AddProductPage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.start, // Align to the extreme right
+          mainAxisAlignment: MainAxisAlignment.start,
+          // Align to the extreme right
           children: [
             Text(
               'Size:',
@@ -431,7 +394,6 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-
   Widget _buildConditionSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -450,15 +412,14 @@ class _AddProductPageState extends State<AddProductPage> {
           child: Container(
             decoration: BoxDecoration(
               border: Border.all(
-                  width: 1.0,
-                  color: Color(0xFFE5EAFF).withOpacity(0.375)
-              ),
+                  width: 1.0, color: Color(0xFFE5EAFF).withOpacity(0.375)),
               borderRadius: BorderRadius.circular(48),
             ),
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   child: Text(
                     selectedCondition,
                     style: TextStyle(

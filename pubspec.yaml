@@ -45,6 +45,7 @@ dependencies:
   cloudinary_url_gen: ^1.6.0
   http: ^1.2.2
   carousel_slider: ^5.0.0
+  image_picker: ^1.1.2
 
 
 

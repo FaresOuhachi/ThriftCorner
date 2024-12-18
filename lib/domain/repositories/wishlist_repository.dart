@@ -7,3 +7,4 @@ abstract class IWishlistRepository {
   Future<void> removeFromWishlist(String userId, String productId);
   Future<bool> isProductInWishlist(String userId, String productId);
 }
+

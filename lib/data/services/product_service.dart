@@ -117,7 +117,7 @@ class ProductService implements IProductService {
 
       final productData = productDoc.data()!;
       final String category = productData['category'];
-      final double price = productData['price'];
+      final int price = productData['price'];
 
       final QuerySnapshot similarProducts = await _firestore
           .collection('products')
